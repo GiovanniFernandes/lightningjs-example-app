@@ -1,4 +1,5 @@
 import { Lightning, Utils } from '@lightningjs/sdk'
+import { TitleButton } from './components'
 
 export default class App extends Lightning.Component {
   static getFonts() {
@@ -31,7 +32,22 @@ export default class App extends Lightning.Component {
           textColor: 0xbbffffff,
         },
       },
+      Button: {
+        type: TitleButton,
+        x: 25,
+        y: 125,
+        w: 200,
+        h: 70,
+        title: 'Press Me',
+        signals: {
+          click: '_handleButtonClick',
+        },
+      },
     }
+  }
+
+  _build() {
+    this._buttonTag = this.tag('Button')
   }
 
   _init() {
@@ -48,5 +64,31 @@ export default class App extends Lightning.Component {
         ],
       })
       .start()
+    this._setState('InitState')
+  }
+
+  _handleButtonClick() {
+    console.log('button clicked')
+  }
+
+  static _states() {
+    return [
+      class InitState extends this {
+        _getFocused() {
+          return this
+        }
+        _handleDown() {
+          this._setState('ButtonState')
+        }
+      },
+      class ButtonState extends this {
+        _getFocused() {
+          return this._buttonTag
+        }
+        _handleUp() {
+          this._setState('InitState')
+        }
+      },
+    ]
   }
 }
