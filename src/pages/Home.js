@@ -11,17 +11,8 @@ export class Home extends Lightning.Component {
         color: 0xfffbb03b,
         src: Utils.asset('images/background.png'),
       },
-      Logo: {
-        mountX: 0.5,
-        mountY: 1,
-        x: 960,
-        y: 600,
-        src: Utils.asset('images/logo.png'),
-      },
-      Text: {
-        mount: 0.5,
-        x: 960,
-        y: 720,
+      ScreenTitle: {
+        y: 80,
         text: {
           text: "Let's start Building!",
           fontFace: 'Regular',
@@ -29,10 +20,27 @@ export class Home extends Lightning.Component {
           textColor: 0xbbffffff,
         },
       },
+      Logo: {
+        mountX: 0.5,
+        mountY: 1,
+        x: 960,
+        y: 600,
+        src: Utils.asset('images/logo.png'),
+      },
+      Caption: {
+        y: 620,
+        text: {
+          textAlign: 'center',
+          text: 'Use the arrows to move the focused element and press enter to interact.',
+          fontFace: 'Regular',
+          fontSize: 32,
+          textColor: 0xbbffffff,
+        },
+      },
       Button: {
         type: TitleButton,
-        x: 25,
-        y: 125,
+        x: (1920 - 200) / 2,
+        y: 800,
         w: 200,
         h: 70,
         title: 'Press Me',
@@ -44,7 +52,14 @@ export class Home extends Lightning.Component {
   }
 
   _build() {
+    this._screenTitleTag = this.tag('ScreenTitle')
+    this._captionTag = this.tag('Caption')
     this._buttonTag = this.tag('Button')
+  }
+
+  _setup() {
+    this._centerElementHorizontally(this._screenTitleTag)
+    this._centerElementHorizontally(this._captionTag)
   }
 
   _init() {
@@ -61,7 +76,14 @@ export class Home extends Lightning.Component {
         ],
       })
       .start()
-    this._setState('InitState')
+    this._setState('ButtonState')
+  }
+
+  _centerElementHorizontally(elementTag) {
+    console.log(elementTag)
+    elementTag.once('txLoaded', (tx) => {
+      elementTag.x = (1920 - tx._source.renderInfo.w) / 2
+    })
   }
 
   _handleButtonClick() {
@@ -70,20 +92,9 @@ export class Home extends Lightning.Component {
 
   static _states() {
     return [
-      class InitState extends this {
-        _getFocused() {
-          return this
-        }
-        _handleDown() {
-          this._setState('ButtonState')
-        }
-      },
       class ButtonState extends this {
         _getFocused() {
           return this._buttonTag
-        }
-        _handleUp() {
-          this._setState('InitState')
         }
       },
     ]
