@@ -136,4 +136,12 @@ export class TitleButton extends Lightning.Component {
   get focusedTitleColor() {
     return this._focusedTitleColor || 0xff282828
   }
+
+  static get width() {
+    return this.w || 200
+  }
+
+  static get height() {
+    return this.w || 100
+  }
 }
