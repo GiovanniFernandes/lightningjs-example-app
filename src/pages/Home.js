@@ -43,9 +43,20 @@ export class Home extends Lightning.Component {
         y: 800,
         w: 200,
         h: 70,
-        title: 'Press Me',
+        title: 'Images Panel',
         signals: {
           click: '_handleButtonClick',
+        },
+      },
+      ListButton: {
+        type: TitleButton,
+        x: (1920 - 200) / 2,
+        y: 880,
+        w: 200,
+        h: 70,
+        title: 'Images List',
+        signals: {
+          click: '_handleListButtonClick',
         },
       },
     }
@@ -55,6 +66,7 @@ export class Home extends Lightning.Component {
     this._screenTitleTag = this.tag('ScreenTitle')
     this._captionTag = this.tag('Caption')
     this._buttonTag = this.tag('Button')
+    this._listButtonTag = this.tag('ListButton')
   }
 
   _setup() {
@@ -90,11 +102,28 @@ export class Home extends Lightning.Component {
     Router.navigate('images-panel')
   }
 
+  _handleListButtonClick() {
+    Router.navigate('images-list')
+  }
+
   static _states() {
     return [
       class ButtonState extends this {
         _getFocused() {
           return this._buttonTag
+        }
+
+        _handleDown() {
+          this._setState('ListButtonState')
+        }
+      },
+      class ListButtonState extends this {
+        _getFocused() {
+          return this._listButtonTag
+        }
+
+        _handleUp() {
+          this._setState('ButtonState')
         }
       },
     ]

@@ -1,6 +1,6 @@
 import Lightning from '@lightningjs/sdk/src/Lightning'
 
-export class TitleButton extends Lightning.Component {
+export class ImageCard extends Lightning.Component {
   static _template() {
     return {
       w: (w) => w,
@@ -9,10 +9,12 @@ export class TitleButton extends Lightning.Component {
         w: (w) => w,
         h: (h) => h,
         rect: true,
-        Title: {
-          text: {
-            text: this.bindProp('title'),
-          },
+        Fallback: {
+          rect: true,
+          color: 0xff282828,
+        },
+        Image: {
+          src: this.bindProp('imgUrl'),
         },
       },
     }
@@ -20,12 +22,10 @@ export class TitleButton extends Lightning.Component {
 
   _build() {
     this._backgroundTag = this.tag('Background')
-    this._titleTag = this.tag('Title')
   }
 
   _setup() {
     this._patchProps()
-    this._centerTitle()
   }
 
   _patchProps() {
@@ -36,26 +36,27 @@ export class TitleButton extends Lightning.Component {
           type: Lightning.shaders.RoundedRectangle,
           radius: this.radius,
         },
-        Title: {
-          color: this.unfocusedTitleColor,
-          text: {
-            fontSize: this.titleSize,
+        Fallback: {
+          shader: {
+            type: Lightning.shaders.RoundedRectangle,
+            radius: this.radius,
           },
+          x: this.borderWidth,
+          y: this.borderWidth,
+          w: this.w - 2 * this.borderWidth,
+          h: this.h - 2 * this.borderWidth,
+        },
+        Image: {
+          shader: {
+            type: Lightning.shaders.RoundedRectangle,
+            radius: this.radius,
+          },
+          x: this.borderWidth,
+          y: this.borderWidth,
+          w: this.w - 2 * this.borderWidth,
+          h: this.h - 2 * this.borderWidth,
         },
       },
-    })
-  }
-
-  _centerTitle() {
-    this._titleTag.once('txLoaded', (tx) => {
-      this.patch({
-        Background: {
-          Title: {
-            x: (this.w - tx._source.renderInfo.w) / 2,
-            y: (this.h - tx._source.renderInfo.h) / 2,
-          },
-        },
-      })
     })
   }
 
@@ -67,9 +68,6 @@ export class TitleButton extends Lightning.Component {
     this.patch({
       Background: {
         color: this.unfocusedBgColor,
-        Title: {
-          color: this.unfocusedTitleColor,
-        },
       },
     })
   }
@@ -78,9 +76,6 @@ export class TitleButton extends Lightning.Component {
     this.patch({
       Background: {
         color: this.focusedBgColor,
-        Title: {
-          color: this.focusedTitleColor,
-        },
       },
     })
   }
@@ -95,15 +90,15 @@ export class TitleButton extends Lightning.Component {
   }
 
   get radius() {
-    return this._radius || 6
+    return this._radius || 12
   }
 
-  set titleSize(value) {
-    this._titleSize = value
+  set borderWidth(value) {
+    this._borderWidth = value
   }
 
-  get titleSize() {
-    return this._titleSize || 24
+  get borderWidth() {
+    return this._borderWidth || 4
   }
 
   set unfocusedBgColor(value) {
@@ -111,7 +106,7 @@ export class TitleButton extends Lightning.Component {
   }
 
   get unfocusedBgColor() {
-    return this._unfocusedBgColor || 0xff454545
+    return this._unfocusedBgColor || 0x00000000
   }
 
   set focusedBgColor(value) {
@@ -122,27 +117,11 @@ export class TitleButton extends Lightning.Component {
     return this._focusedBgColor || 0xfff2f2f2
   }
 
-  set unfocusedTitleColor(value) {
-    this._unfocusedTitleColor = value
-  }
-
-  get unfocusedTitleColor() {
-    return this._unfocusedTitleColor || 0xfff2f2f2
-  }
-
-  set focusedTitleColor(value) {
-    this._focusedTitleColor = value
-  }
-
-  get focusedTitleColor() {
-    return this._focusedTitleColor || 0xff282828
-  }
-
   static get width() {
-    return this.w || 200
+    return this.w || 225
   }
 
   static get height() {
-    return this.h || 100
+    return this.h || 400
   }
 }

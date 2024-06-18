@@ -1,9 +1,9 @@
 import Lightning from '@lightningjs/sdk/src/Lightning'
 import { List } from '@lightningjs/ui'
-import { ImagePlaceholder, TitleButton } from '../components'
+import { ImageCard, TitleButton } from '../components'
 import { Router } from '@lightningjs/sdk'
 
-export class ImagesPanel extends Lightning.Component {
+export class ImagesList extends Lightning.Component {
   static _template() {
     return {
       w: 1920,
@@ -22,7 +22,7 @@ export class ImagesPanel extends Lightning.Component {
       ScreenTitle: {
         y: 50,
         text: {
-          text: 'Images Panel',
+          text: 'Images List',
           fontSize: 48,
         },
       },
@@ -57,24 +57,6 @@ export class ImagesPanel extends Lightning.Component {
         w: 1875,
         h: 100,
       },
-      DisplayedImage: {
-        x: 25,
-        y: 410,
-        w: 600,
-        h: 350,
-        shader: {
-          type: Lightning.shaders.RoundedRectangle,
-          radius: 12,
-        },
-      },
-      ImagePlaceholder: {
-        x: 25,
-        y: 410,
-        w: 600,
-        h: 350,
-        type: ImagePlaceholder,
-        placeholder: 'Select an item to get an image.',
-      },
     }
   }
 
@@ -84,13 +66,11 @@ export class ImagesPanel extends Lightning.Component {
     this._addButtonTag = this.tag('AddButton')
     this._clearButtonTag = this.tag('ClearButton')
     this._contentListTag = this.tag('ContentList')
-    this._imagePlaceholderTag = this.tag('ImagePlaceholder')
-    this._displayedImageTag = this.tag('DisplayedImage')
 
     this._slidesCount = 5
 
     const slides = Array.from(Array(this._slidesCount).keys()).map((value) =>
-      this._createButton(value),
+      this._createCards(value),
     )
 
     this._contentListTag.items = slides
@@ -105,11 +85,6 @@ export class ImagesPanel extends Lightning.Component {
       })
     })
 
-    this._displayedImageTag.on('txLoaded', () => {
-      this._imagePlaceholderTag.visible = false
-      this._displayedImageTag.alpha = 1
-    })
-
     this._setState('AddButtonState')
   }
 
@@ -117,7 +92,7 @@ export class ImagesPanel extends Lightning.Component {
     const currentListSize = this._contentListTag.items.length
     const newSlides = Array.from(Array(this._slidesCount).keys())
       .map((value) => value + currentListSize)
-      .map((value) => this._createButton(value))
+      .map((value) => this._createCards(value))
 
     this._contentListTag.add(newSlides)
     this._contentListTag.reposition()
@@ -125,31 +100,23 @@ export class ImagesPanel extends Lightning.Component {
 
   _handleClearButtonClick() {
     this._contentListTag.setIndex(0)
-
-    this._imagePlaceholderTag.placeholder = 'Select an item to get an image.'
-    this._imagePlaceholderTag.visible = true
-    this._displayedImageTag.alpha = 0.001
-
     this._contentListTag.clear()
   }
 
-  _createButton(title) {
+  _createCards(value) {
     return {
-      type: TitleButton,
-      w: 200,
-      h: 100,
-      title,
+      type: ImageCard,
+      w: 225,
+      h: 400,
+      imgUrl: `https://picsum.photos/225/400?v=${value}`,
       signals: {
-        click: this._handleListItemClick.bind(this, title),
+        click: this._handleCardClick.bind(this, value),
       },
     }
   }
 
-  _handleListItemClick(title) {
-    this._imagePlaceholderTag.placeholder = 'Loading...'
-    this._imagePlaceholderTag.visible = true
-    this._displayedImageTag.alpha = 0.001
-    this._displayedImageTag.src = `https://picsum.photos/600/350?v=${title}`
+  _handleCardClick(value) {
+    console.log(`card ${value} clicked`)
   }
 
   _handleBackClick() {

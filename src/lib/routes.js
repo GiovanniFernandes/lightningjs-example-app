@@ -1,4 +1,4 @@
-import { Home, ImagesPanel } from '../pages'
+import { Home, ImagesList, ImagesPanel } from '../pages'
 
 export default {
   root: 'home',
@@ -10,6 +10,10 @@ export default {
     {
       path: 'images-panel',
       component: ImagesPanel,
+    },
+    {
+      path: 'images-list',
+      component: ImagesList,
     },
   ],
 }
